@@ -1,18 +1,33 @@
-# TODO
+# Better (send)Beacon
 
-Make sure to update this with the right documentation!
+A better version of `navigator.sendBeacon`, that doesn't break when you try to queue too many events!<sup><a href="#whaaa">1</a></sup>
 
 ## Installation:
 
 ```sh
-bun add TODO
+bun add better-beacon
 ```
 
 ## Usage:
 
 ```tsx
-// TODO
+import BetterBeacon from "better-beacon";
+
+let bbeacon = new BetterBeacon({
+  autoTransformJSON: true,
+});
+
+// Works just like `navigator.sendBeacon`!
+bbeacon.send("/path", "true");
+
+// Automatically converts objects to Blobs under the hood
+bbeacon.send("/path", { data: true });
 ```
+
+## Context:
+
+<div id="#whaaa"></div>
+You might be wondering, why does this library exist? Well fortunately for you, I wrote up a short blog post about it available here: [TODO](https://matthamlin.me/)
 
 ## Contributing:
 

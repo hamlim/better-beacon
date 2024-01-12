@@ -1,0 +1,72 @@
+type BeaconEvent = {
+  path: string;
+  data: any;
+};
+
+export default class BetterBeacon {
+  config: {
+    autoTransformJSON: boolean;
+  };
+
+  queue: Array<BeaconEvent> = [];
+
+  processing: boolean = false;
+
+  constructor({
+    autoTransformJSON = false,
+  } = {}) {
+    this.config = {
+      autoTransformJSON,
+    };
+
+    if (typeof navigator.sendBeacon !== "function") {
+      throw new Error(`Your browser doesn't support navigator.sendBeacon`);
+    }
+    if (typeof window.requestAnimationFrame !== "function") {
+      throw new Error(`Your browser doesn't support window.requestAnimationFrame`);
+    }
+
+    window.addEventListener("beforeunload", this.beforeUnload);
+  }
+
+  beforeUnload() {
+    if (this.queue.length) {
+      this.queue.forEach(({ path, data }) => {
+        this.send(path, data);
+      });
+    }
+  }
+
+  send(path: string, data: any) {
+    if (this.config.autoTransformJSON && typeof data === "object") {
+      data = new Blob([JSON.stringify(data)], { type: "application/json" });
+    }
+
+    this.queue.push({ path, data });
+    this.processEvents();
+  }
+
+  processEvents() {
+    if (this.processing) {
+      return;
+    }
+    this.processing = true;
+    // iterate through the queue and send the data using navigator.sendBeacon
+    // if the sendBeacon call returns false, we want to re-enqueue the data
+    // exit the loop, and schedule to resume the loop via requestAnimationFrame
+    // if the sendBeacon call returns true, we want to remove the data from the queue
+    // and continue the loop
+    // if the queue is empty, exit the loop
+    // schedule to resume the loop via requestAnimationFrame
+    while (this.queue.length) {
+      let { path, data } = this.queue.shift();
+      let result = navigator.sendBeacon(path, data);
+      if (!result) {
+        this.queue.unshift({ path, data });
+        window.requestAnimationFrame(this.processEvents);
+        this.processing = false;
+        break;
+      }
+    }
+  }
+}
