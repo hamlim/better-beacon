@@ -1,7 +1,4 @@
-type BeaconEvent = {
-  path: string;
-  data: any;
-};
+type BeaconEvent = [string, any];
 
 export default class BetterBeacon {
   config: {
@@ -31,7 +28,7 @@ export default class BetterBeacon {
 
   beforeUnload() {
     if (this.queue.length) {
-      this.queue.forEach(({ path, data }) => {
+      this.queue.forEach(([path, data]) => {
         this.send(path, data);
       });
     }
@@ -42,14 +39,11 @@ export default class BetterBeacon {
       data = new Blob([JSON.stringify(data)], { type: "application/json" });
     }
 
-    this.queue.push({ path, data });
+    this.queue.push([path, data]);
     this.processEvents();
   }
 
   processEvents() {
-    if (this.processing) {
-      return;
-    }
     this.processing = true;
     // iterate through the queue and send the data using navigator.sendBeacon
     // if the sendBeacon call returns false, we want to re-enqueue the data
@@ -58,15 +52,16 @@ export default class BetterBeacon {
     // and continue the loop
     // if the queue is empty, exit the loop
     // schedule to resume the loop via requestAnimationFrame
-    while (this.queue.length) {
-      let { path, data } = this.queue.shift();
+    while (this.queue.length && this.processing) {
+      let [path, data] = this.queue.shift();
       let result = navigator.sendBeacon(path, data);
       if (!result) {
-        this.queue.unshift({ path, data });
+        this.queue.unshift([path, data]);
         window.requestAnimationFrame(this.processEvents);
         this.processing = false;
         break;
       }
     }
+    this.processing = false;
   }
 }

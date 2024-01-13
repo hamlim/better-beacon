@@ -14,7 +14,8 @@
     "jsx": "preserve",
     "declaration": true,
     "emitDeclarationOnly": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "types": ["bun-types"]
   },
   "exclude": ["node_modules", ".yarn", "src/__tests__/", "dist/"],
   "include": ["**/*.ts", "**/*.tsx"]
