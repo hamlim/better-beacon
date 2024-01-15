@@ -1,0 +1,26 @@
+<html>
+  <head>
+    <title>Sandbox</title>
+  </head>
+  <body>
+    <h1>Sandbox</h1>
+    <script type="module">
+      import BetterBeacon from './better-beacon.js';
+      window.BetterBeacon = BetterBeacon;
+      let betterBeacon = new BetterBeacon({
+        autoTransformJSON: true,
+      });
+
+      betterBeacon.send('/api', "start");
+
+      for (let i = 0; i < 100_000; i++) {
+        console.log(i)
+        betterBeacon.send('/api', {
+          i,
+        });
+      }
+
+      betterBeacon.send('/api', "end");
+      </script>
+  </body>
+</html>

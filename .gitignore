@@ -7,3 +7,7 @@ dist
 yarn-error.log
 
 .turbo/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
