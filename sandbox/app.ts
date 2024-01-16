@@ -13,7 +13,6 @@ Bun.serve({
         let body;
         switch (headers.get("content-type")) {
           case "application/json": {
-            console.log(request);
             body = await request.json();
             break;
           }

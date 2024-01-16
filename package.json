@@ -12,7 +12,8 @@
     "prepub": "bun run build",
     "pub": "npm publish --access public",
     "tsc": "tsc --noEmit",
-    "e2e": "bun playwright test"
+    "e2e": "bun playwright test",
+    "sandbox": "bun --hot ./sandbox/app.ts"
   },
   "devDependencies": {
     "@happy-dom/global-registrator": "^12.1.6",

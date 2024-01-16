@@ -43,25 +43,45 @@ export default class BetterBeacon {
     this.processEvents();
   }
 
+  // processEvents() {
+  //   this.processing = true;
+  //   // iterate through the queue and send the data using navigator.sendBeacon
+  //   // if the sendBeacon call returns false, we want to re-enqueue the data
+  //   // exit the loop, and schedule to resume the loop via requestAnimationFrame
+  //   // if the sendBeacon call returns true, we want to remove the data from the queue
+  //   // and continue the loop
+  //   // if the queue is empty, exit the loop
+  //   // schedule to resume the loop via requestAnimationFrame
+  //   while (this.queue.length && this.processing) {
+  //     let [path, data] = this.queue.shift();
+  //     let result = navigator.sendBeacon(path, data);
+  //     if (!result) {
+  //       this.queue.unshift([path, data]);
+  //       window.requestAnimationFrame(this.processEvents);
+  //       this.processing = false;
+  //       break;
+  //     }
+  //   }
+  //   this.processing = false;
+  // }
   processEvents() {
-    this.processing = true;
-    // iterate through the queue and send the data using navigator.sendBeacon
-    // if the sendBeacon call returns false, we want to re-enqueue the data
-    // exit the loop, and schedule to resume the loop via requestAnimationFrame
-    // if the sendBeacon call returns true, we want to remove the data from the queue
-    // and continue the loop
-    // if the queue is empty, exit the loop
-    // schedule to resume the loop via requestAnimationFrame
-    while (this.queue.length && this.processing) {
+    if (this.processing) {
+      return;
+    }
+    let success = true;
+    while (success && this.queue.length) {
       let [path, data] = this.queue.shift();
-      let result = navigator.sendBeacon(path, data);
-      if (!result) {
+      success = navigator.sendBeacon(path, data);
+      if (!success) {
         this.queue.unshift([path, data]);
-        window.requestAnimationFrame(this.processEvents);
-        this.processing = false;
-        break;
       }
     }
-    this.processing = false;
+    if (this.queue.length) {
+      this.processing = true;
+      window.requestAnimationFrame(() => {
+        this.processing = false;
+        this.processEvents();
+      });
+    }
   }
 }
