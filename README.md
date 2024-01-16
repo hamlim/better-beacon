@@ -27,7 +27,7 @@ bbeacon.send("/path", { data: true });
 ## Context:
 
 <div id="#whaaa"></div>
-You might be wondering, why does this library exist? Well fortunately for you, I wrote up a short blog post about it available here: [TODO](https://matthamlin.me/)
+You might be wondering, why does this library exist? Well fortunately for you, I wrote up a short blog post about it available here: [Building Better Beacon](https://matthamlin.me/2024/january/building-better-beacon)
 
 ## Contributing:
 
